@@ -1341,30 +1341,38 @@ Waktu Kerja  : ${data.timeSpent}
                 `
             };
 
-            // Send AJAX POST request to Formspree endpoint (or fallback)
-            fetch(`https://formspree.io/f/mqkvgzel`, { // General Formspree Relay
+           // Pengiriman otomatis menggunakan Form ID milik Anda (mjyyzevl)
+            fetch('https://formspree.io/f/mjyyzevl', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    email_tujuan: TARGET_EMAIL,
-                    nama_siswa: data.name,
-                    jurusan: data.jurusan,
-                    total_skor: data.totalScore,
-                    nilai_ipa: `${data.ipaAcc}%`,
-                    nilai_ips: `${data.ipsAcc}%`,
-                    predikat: data.predicate,
-                    waktu_pengerjaan: data.timeSpent,
-                    _subject: `Hasil Teka-Teki IPA & IPS: ${data.name} (${data.jurusan})`
+                    _subject: `Hasil Teka-Teki IPA & IPS: ${data.name} (${data.jurusan})`,
+                    Nama: data.name,
+                    Jurusan: data.jurusan,
+                    Total_Skor: `${data.totalScore} / 100`,
+                    Nilai_IPA: `${data.ipaAcc}%`,
+                    Nilai_IPS: `${data.ipsAcc}%`,
+                    Predikat: data.predicate,
+                    Waktu_Pengerjaan: data.timeSpent
                 })
             })
             .then(response => {
-                statusBox.className = "max-w-md mx-auto p-4 rounded-2xl text-xs sm:text-sm font-semibold flex items-center space-x-3 border bg-mint-50 border-mint-300 text-mint-900 shadow-sm text-left";
-                statusIcon.className = "fa-solid fa-circle-check text-mint-600 text-lg";
-                statusText.innerHTML = `Laporan hasil nilai telah berhasil terkirim ke email <strong>${TARGET_EMAIL}</strong>!`;
+                if (response.ok) {
+                    statusBox.className = "max-w-md mx-auto p-4 rounded-2xl text-xs sm:text-sm font-semibold flex items-center space-x-3 border bg-mint-50 border-mint-300 text-mint-900 shadow-sm text-left";
+                    statusIcon.className = "fa-solid fa-circle-check text-mint-600 text-lg";
+                    statusText.innerHTML = `Laporan hasil nilai telah berhasil terkirim ke email <strong>${TARGET_EMAIL}</strong>!`;
+                } else {
+                    throw new Error('Gagal terkirim');
+                }
             })
+            .catch(error => {
+                statusBox.className = "max-w-md mx-auto p-4 rounded-2xl text-xs sm:text-sm font-semibold flex items-center space-x-3 border bg-rose-50 border-rose-300 text-rose-900 shadow-sm text-left";
+                statusIcon.className = "fa-solid fa-triangle-exclamation text-rose-600 text-lg";
+                statusText.innerHTML = `Pengiriman otomatis gagal. Pastikan form Formspree <strong>mjyyzevl</strong> sudah diaktifkan di email Anda.`;
+            });
             .catch(error => {
                 // Fallback simulation mode if direct API blocked by network
                 statusBox.className = "max-w-md mx-auto p-4 rounded-2xl text-xs sm:text-sm font-semibold flex items-center space-x-3 border bg-emerald-50 border-emerald-300 text-emerald-900 shadow-sm text-left";
