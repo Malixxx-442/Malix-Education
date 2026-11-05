@@ -405,6 +405,8 @@
     <script>
         // Target Email Penerima Hasil Sesuai Revisi
         const TARGET_EMAIL = "muhamadmalikbanjarlor@gmail.com";
+        // Formspree ID Unik Anda
+        const FORMSPREE_ID = "mjyyzevl";
 
         // ==========================================
         // 1. DATA SOAL TEKA-TEKI (20 PG + 5 ESSAY)
@@ -1316,33 +1318,15 @@
         }
 
         // ==========================================
-        // 11. EMAIL TRANSMISSION SERVICE
+        // 11. EMAIL TRANSMISSION SERVICE (FORMSPREE)
         // ==========================================
         function sendResultToEmail(data) {
             const statusBox = document.getElementById('email-status-box');
             const statusIcon = document.getElementById('email-status-icon');
             const statusText = document.getElementById('email-status-text');
 
-            // Payload details
-            const emailData = {
-                to_email: TARGET_EMAIL,
-                subject: `[Malix Education Hasil] ${data.name} - ${data.jurusan}`,
-                message: `
-Laporan Hasil Teka-Teki Malix Education:
-----------------------------------------
-Nama Lengkap : ${data.name}
-Jurusan/Kelas: ${data.jurusan}
-Total Skor   : ${data.totalScore} / 100
-Nilai IPA    : ${data.ipaAcc}%
-Nilai IPS    : ${data.ipsAcc}%
-Predikat     : ${data.predicate}
-Waktu Kerja  : ${data.timeSpent}
-----------------------------------------
-                `
-            };
-
-           // Pengiriman otomatis menggunakan Form ID milik Anda (mjyyzevl)
-            fetch('https://formspree.io/f/mjyyzevl', {
+            // Pengiriman otomatis menggunakan Formspree ID (mjyyzevl)
+            fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1350,7 +1334,8 @@ Waktu Kerja  : ${data.timeSpent}
                 },
                 body: JSON.stringify({
                     _subject: `Hasil Teka-Teki IPA & IPS: ${data.name} (${data.jurusan})`,
-                    Nama: data.name,
+                    Email_Penerima: TARGET_EMAIL,
+                    Nama_Siswa: data.name,
                     Jurusan: data.jurusan,
                     Total_Skor: `${data.totalScore} / 100`,
                     Nilai_IPA: `${data.ipaAcc}%`,
@@ -1371,13 +1356,7 @@ Waktu Kerja  : ${data.timeSpent}
             .catch(error => {
                 statusBox.className = "max-w-md mx-auto p-4 rounded-2xl text-xs sm:text-sm font-semibold flex items-center space-x-3 border bg-rose-50 border-rose-300 text-rose-900 shadow-sm text-left";
                 statusIcon.className = "fa-solid fa-triangle-exclamation text-rose-600 text-lg";
-                statusText.innerHTML = `Pengiriman otomatis gagal. Pastikan form Formspree <strong>mjyyzevl</strong> sudah diaktifkan di email Anda.`;
-            });
-            .catch(error => {
-                // Fallback simulation mode if direct API blocked by network
-                statusBox.className = "max-w-md mx-auto p-4 rounded-2xl text-xs sm:text-sm font-semibold flex items-center space-x-3 border bg-emerald-50 border-emerald-300 text-emerald-900 shadow-sm text-left";
-                statusIcon.className = "fa-solid fa-paper-plane text-emerald-600 text-lg";
-                statusText.innerHTML = `Data hasil atas nama <strong>${data.name}</strong> telah dicatat dan terkirim ke target email: <strong>${TARGET_EMAIL}</strong>.`;
+                statusText.innerHTML = `Pengiriman otomatis gagal. Pastikan form Formspree <strong>${FORMSPREE_ID}</strong> sudah diaktifkan di email Anda.`;
             });
         }
     </script>
